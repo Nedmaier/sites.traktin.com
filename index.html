@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Portfolio – Traktin</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Портфолио проектов</h1>
+    <div class="controls">
+      <label>Сортировка:
+        <select id="sortSelect">
+          <option value="rank">По рангу (по умолчанию)</option>
+          <option value="year">По году</option>
+          <option value="name">По названию</option>
+        </select>
+      </label>
+
+      <label>Фильтр по типу:
+        <select id="filterSelect">
+          <option value="all">Все</option>
+          <option value="shop">Интернет-магазины</option>
+          <option value="company">Сайты компаний</option>
+          <option value="personal">Частные проекты</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main id="projectsContainer"></main>
+
+  <script src="script.js"></script>
+</body>
+</html>
