@@ -720,53 +720,67 @@ span.difficulty2 {
   max-height: 90%;
   border-radius: 20px;
 }
-
 /* ==============================
    📂 Expanded project
 ============================== */
 #projectsContainer.expanded { display: grid !important; }
-#projectsContainer.expanded .project:not(.expanded):not(.will-expand) {
+
+/* стало */
+#projectsContainer.expanded .project:not(.expanded):not(.will-expand):not(.collapsing):not(.expanding) {
   opacity: 0;
   filter: blur(var(--fade-blur));
   pointer-events: none;
-  transition: opacity 0.6s ease, filter 0.6s ease;
-  /* убрали transform: scale и не меняем позицию */
+  transition: none !important; /* сразу скрываем, без моргания */
+ 
 }
+
+/* Финальное состояние раскрытой карточки */
 .project.expanded {
   grid-column: 1 / -1;
-    order: -1;              /* ⬅️ поднять в начало сетки */
+  order: -1;            
   position: relative;
   max-width: 960px;
   margin: 40px auto;
   filter: none;
-  opacity: 1 !important;
-  transform: none !important;
-  transition: opacity 0.8s ease, transform 0.8s ease;
- animation: expandFadeIn 0.6s ease forwards;
-}
-@keyframes expandFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  opacity: 1 !important;  
+  z-index: 10;
 }
 
+/* Фаза анимации открытия */
+.project.expanding {
+  transition: transform 0.7s cubic-bezier(0.22,1,0.36,1),
+              opacity 0.4s ease;
+	  will-change: transform;
+	  z-index: 10;
+}
 
+/* Фаза анимации закрытия */
+.project.collapsing {
+  /* Важно: карточка остаётся expanded, пока проигрывается transform */
+  transition: transform 0.7s cubic-bezier(0.22,1,0.36,1),
+              opacity 0.4s ease;
+  z-index: 10;
+    will-change: transform;
+}
+
+/* Детали внутри карточки */
 .project-details {
   display: none;
   padding: 2rem;
-  animation: fadeIn 0.3s ease forwards;
   background: rgba(255,255,255,0.25);
-  border-radius: 0;
   margin-top: 1px;
   text-align: center;
+  animation: fadeIn 0.3s ease forwards;
 }
-.project.expanded .project-details { display: block; }
+
+/* ✨ Мягкое появление деталей */
+.project.expanded .project-details {
+  display: block;
+  animation: fadeIn 0.4s ease forwards;
+}
+
 .project-details p { margin: 0.5rem 0; }
+
 .close-details {
   display: inline-block;
   margin-bottom: 0.5rem;
@@ -776,7 +790,8 @@ span.difficulty2 {
   background: var(--glass-light);
   cursor: pointer;
 }
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: none; }
+  to   { opacity: 1; transform: none; }
 }

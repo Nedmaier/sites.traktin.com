@@ -335,112 +335,165 @@ function getSolutionWords(n) {
   return "интересных<br>решений";
 }
 
-
-// === Открыть модалку ===
+// === Открыть модалку (FLIP с деталями и скриншотами) ===
 function openModal(project, card) {
   const container = document.getElementById("projectsContainer");
 
-  // Collapse previously opened
-  const opened = container.querySelector(".project.expanded");
-  if (opened && opened !== card) opened.classList.remove("expanded");
-
- // Если карточка уже expanded → ничего не делаем
+  // уже раскрыта — выходим
   if (card.classList.contains("expanded")) return;
 
-  // Mark this card as "will-expand" so it doesn't blur/shrink with the rest
+  // закрываем предыдущую, если была
+  const opened = container.querySelector(".project.expanded");
+  if (opened && opened !== card) closeModal(opened);
+
+  // включаем режим "остальные скрыть"
+  container.classList.add("expanded");
   card.classList.add("will-expand");
 
-  // Start collapsing others while keeping grid layout
-  container.classList.add("expanded");
+  // FIRST: текущее (collapsed)
+  const first = card.getBoundingClientRect();
 
-  // After delay, switch card to expanded and build details
-  setTimeout(() => {
-    card.classList.remove("will-expand");
-    card.classList.add("expanded");
-    card.setAttribute("aria-expanded", "true");
+  // вставляем/перестраиваем details
+  let details = card.querySelector(".project-details");
+  if (details) details.remove();
 
-    // (Re)build details block
-    let details = card.querySelector(".project-details");
-    if (details) details.remove();
-    details = document.createElement("div");
-    details.className = "project-details";
-   const screenshots = Array.isArray(project.screenshots) ? project.screenshots : [];
-    let idx = 0;
-    const hasShots = screenshots.length > 0;
+  details = document.createElement("div");
+  details.className = "project-details";
 
-    const shotsHTML = hasShots ? `
-      <div class="screenshots-slider active">
-        <button class="prev" type="button" aria-label="Предыдущий">‹</button>
-        <img class="current" src="${screenshots[0]}" alt="screenshot">
-        <button class="next" type="button" aria-label="Следующий">›</button>
-      </div>
-    ` : "";
+  const screenshots = Array.isArray(project.screenshots) ? project.screenshots : [];
+  let idx = 0;
+  const hasShots = screenshots.length > 0;
 
-    details.innerHTML = `
-      <button class="close-details" type="button">Вернуться к списку проектов</button>  
-      <h2>Детали проекта</h2>
-      ${project.status ? `<p><strong>Статус:</strong> ${project.status}</p>` : ""}
-      ${project.description ? `<p><strong>Описание:</strong> ${project.description}</p>` : ""}
-      ${project.details ? `<p class="details"><strong>Подробности:</strong> ${project.details}</p>` : ""}
-      ${(project.technologies && project.technologies.length) ? `<p><strong>Технологии:</strong> ${project.technologies.join(", ")}</p>` : ""}
-      ${shotsHTML}
-	
-    `;
-    card.appendChild(details);
-  details.addEventListener("click", (e) => e.stopPropagation());
-  
-    // Handlers
-    const closeBtn = details.querySelector(".close-details");
-    closeBtn.addEventListener("click", (e) => { e.stopPropagation(); closeModal(); });
+  const shotsHTML = hasShots ? `
+    <div class="screenshots-slider active">
+      <button class="prev" type="button" aria-label="Предыдущий">‹</button>
+      <img class="current" src="${screenshots[0]}" alt="screenshot">
+      <button class="next" type="button" aria-label="Следующий">›</button>
+    </div>
+  ` : "";
 
-    if (hasShots) {
-      const img = details.querySelector("img.current");
-      const prev = details.querySelector(".prev");
-      const next = details.querySelector(".next");
+  details.innerHTML = `
+    <button class="close-details" type="button">Вернуться к списку проектов</button>
+    <h2>Детали проекта</h2>
+    ${project.status ? `<p><strong>Статус:</strong> ${project.status}</p>` : ""}
+    ${project.description ? `<p><strong>Описание:</strong> ${project.description}</p>` : ""}
+    ${project.details ? `<p class="details"><strong>Подробности:</strong> ${project.details}</p>` : ""}
+    ${(project.technologies && project.technologies.length) ? `<p><strong>Технологии:</strong> ${project.technologies.join(", ")}</p>` : ""}
+    ${shotsHTML}
+  `;
 
-      function show(i) {
-        if (!screenshots.length) return;
-        idx = (i + screenshots.length) % screenshots.length;
-        img.classList.add("fade-out");
-        setTimeout(() => {
-          img.src = screenshots[idx];
-          img.classList.remove("fade-out");
-        }, 220);
-      }
-      prev.addEventListener("click", (e) => { e.stopPropagation(); show(idx - 1); });
-      next.addEventListener("click", (e) => { e.stopPropagation(); show(idx + 1); });
+  // включаем expanded
+  card.classList.add("expanded", "expanding");
+  card.setAttribute("aria-expanded", "true");
+  card.appendChild(details);
 
-      function onKey(e) {
-        if (e.key === "ArrowLeft") show(idx - 1);
-        if (e.key === "ArrowRight") show(idx + 1);
-        if (e.key === "Escape") closeModal();
-      }
-      card._keyListener = onKey;
-      window.addEventListener("keydown", onKey);
+  // кнопка «назад»
+  details.querySelector(".close-details").addEventListener("click", (e) => {
+    e.stopPropagation();
+    closeModal(card);
+  });
+
+  // если есть слайдер
+  if (hasShots) {
+    const img = details.querySelector("img.current");
+    const prev = details.querySelector(".prev");
+    const next = details.querySelector(".next");
+
+    function show(i) {
+      if (!screenshots.length) return;
+      idx = (i + screenshots.length) % screenshots.length;
+      img.classList.add("fade-out");
+      setTimeout(() => {
+        img.src = screenshots[idx];
+        img.classList.remove("fade-out");
+      }, 220);
     }
-
-    // Scroll accounting for sticky header
-   
- 
-window.scrollTo({ top: 0, behavior: "smooth" });
-
-  }, 320); // delay so blur+fade of others is visible
-}
-
-// === Закрыть модалку ===
-function closeModal() {
-  const container = document.getElementById("projectsContainer");
-  const opened = container.querySelector(".project.expanded");
-  if (opened) {
-    if (opened._keyListener) {
-      window.removeEventListener("keydown", opened._keyListener);
-      delete opened._keyListener;
-    }
-    opened.classList.remove("expanded", "will-expand");
-    opened.setAttribute("aria-expanded", "false");
+    prev.addEventListener("click", (e) => { e.stopPropagation(); show(idx - 1); });
+    next.addEventListener("click", (e) => { e.stopPropagation(); show(idx + 1); });
   }
-  container.classList.remove("expanded");
+
+  // LAST: expanded
+  const last = card.getBoundingClientRect();
+
+  // INVERT
+  const dx = first.left - last.left;
+  const dy = first.top  - last.top;
+  const sx = first.width  / last.width  || 1;
+  const sy = first.height / last.height || 1;
+
+  card.style.transition = "none";
+  card.style.transform  = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      card.style.transition = "transform 1300ms cubic-bezier(0.22,1,0.36,1), opacity 300ms ease";
+      card.style.transform  = "translate(0,0) scale(1)";
+    });
+  });
+
+  card.addEventListener("transitionend", function tidy(e) {
+    if (e.propertyName !== "transform") return;
+    card.style.transition = "";
+    card.style.transform  = "";
+    card.classList.remove("expanding", "will-expand");
+    card.removeEventListener("transitionend", tidy);
+  });
 }
+
+// === Закрыть модалку (FLIP обратно) ===
+function closeModal(card) {
+  const container = document.getElementById("projectsContainer");
+  if (!card) card = container.querySelector(".project.expanded");
+  if (!card) return;
+
+  // LAST (expanded)
+  const last = card.getBoundingClientRect();
+
+  // финальный DOM (collapsed)
+  card.classList.add("collapsing");
+  card.classList.remove("expanded");
+  card.setAttribute("aria-expanded", "false");
+
+  // FIRST (collapsed)
+  const first = card.getBoundingClientRect();
+
+  // INVERT
+  const dx = last.left - first.left;
+  const dy = last.top  - first.top;
+  const sx = last.width  / first.width  || 1;
+  const sy = last.height / first.height || 1;
+
+  card.style.transition = "none";
+  card.style.transform  = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      card.style.transition = "transform 1200ms cubic-bezier(0.22,1,0.36,1), opacity 300ms ease";
+      card.style.transform  = "translate(0,0) scale(1)";
+    });
+  });
+
+  card.addEventListener("transitionend", function tidy(e) {
+    if (e.propertyName !== "transform") return;
+
+    card.style.transition = "";
+    card.style.transform  = "";
+    card.classList.remove("collapsing");
+
+    // удаляем детали
+    const details = card.querySelector(".project-details");
+    if (details) details.remove();
+
+    // остальные снова видны
+    container.classList.remove("expanded");
+
+    card.removeEventListener("transitionend", tidy);
+  }, { once: true });
+}
+
+
+
+
 
 // === Закрытие по клику на фон ===
 modal.addEventListener("click", (e) => {
