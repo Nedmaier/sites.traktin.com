@@ -6,30 +6,53 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="topbar">
+  <a class="logo-circle">
+  <img src="img/traktin_logo.png" alt="Traktin logo">
+</a>
   <header>
-    <h1>Портфолио проектов</h1>
+    
+  
+    <h1>Интернет-проекты</h1>
     <div class="controls">
-      <label>Сортировка:
+      <label>
         <select id="sortSelect">
-          <option value="rank">По рангу (по умолчанию)</option>
-          <option value="year">По году</option>
+          
+          <option value="year">По дате</option>
           <option value="name">По названию</option>
         </select>
       </label>
 
-      <label>Фильтр по типу:
+      <label>
         <select id="filterSelect">
-          <option value="all">Все</option>
+          <option value="all">Все проекты</option>
           <option value="shop">Интернет-магазины</option>
           <option value="company">Сайты компаний</option>
-          <option value="personal">Частные проекты</option>
+          <option value="marketplace">Маркет-плейсы</option>
         </select>
       </label>
     </div>
   </header>
+ <a href="#" class="cta-circle" id="contactCircle">
+ 
+    <span class="order_button">Контакты<br>для заказа</span>
+    
+  </a>
 
+<div id="contactOptions" class="contact-options"></div>
+</div>
   <main id="projectsContainer"></main>
 
+  <!-- Модальное окно -->
+  <div class="modal" id="projectModal">
+    <div class="modal-content">
+      
+      <div class="slider" id="slider"></div>
+      
+    </div>
+  </div>
+
+  <script src="projects.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

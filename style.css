@@ -1,57 +1,782 @@
-body {
-  font-family: sans-serif;
-  margin: 0;
-  background: #f5f5f5;
-  color: #222;
+/* ==============================
+   📌 Импорты и переменные
+============================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+:root {
+  --bg-gradient: linear-gradient(
+    180deg,
+    hsl(190deg 81.83% 63.29%) 0%,
+    hsl(200deg 96.38% 22.67%) 100%
+  );
+
+  --bg-noise: none;
+  --glass-light: rgba(255, 255, 255, 0.35);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --text-color: #222;
+  --accent-color: #555;
+
+  --fade-blur: 4px; /* для эффекта блюра невыбранных карточек */
 }
+
+/* ==============================
+   🌌 Фон и базовая разметка body
+============================== */
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+
+  background: var(--bg-gradient);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
+  overflow-x: hidden;
+  color: var(--text-color, #222);
+  line-height: 1.6;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 25px;
+}
+
+/* ✨ Мягкое свечение поверх фона */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  background: radial-gradient(
+    circle at 50% 40%,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0) 80%
+  );
+  filter: blur(120px);
+}
+
+/* ===============================
+   🔝 Верхняя панель с логотипом и фильтрами
+=============================== */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+justify-content: center;
+  position: sticky;
+  top: 5px;
+  z-index: 100;
+}
+
+/* ===============================
+   🔵 Логотип Traktin
+=============================== */
+/* 🔵 Левый логотип-кружок */
+.logo-circle {
+  position: absolute;
+  left: -32%;
+  top: 15%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 91px;
+  height: 91px;
+  border-radius: 50%;
+
+  background: var(--glass-light);
+  backdrop-filter: blur(14px) saturate(118%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  border: 1px solid var(--glass-border);
+
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+
+  cursor: default;
+  text-decoration: none;
+
+  opacity: 0;
+  transform: translateY(-20px) translateZ(0);
+  transition: opacity 1s ease, transform 1s ease;
+
+  will-change: transform, background;
+  
+   --rotations: 1;
+  --tilt: 0px;
+   --twist: 0deg;
+   overflow: hidden; /* чтобы блик не вылезал за круг */
+}
+
+.logo-circle.show {
+  opacity: 1;
+  transform: translateY(0) translateZ(0);
+}
+
+.logo-circle img {
+  width: 88%;
+  height: auto;
+  object-fit: contain;
+  pointer-events: none; /* чтобы клик на лого не мешал */
+  
+}
+
+/* 🎬 Анимация вращения монетки */
+@keyframes spin-coin {
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
+}
+
+.logo-circle.spin {
+  animation: spin-coin 1s linear;
+}
+.logo-circle.spinning {
+   animation: spinCoin 3s cubic-bezier(0.25, 0.9, 0.4, 1) forwards;
+}
+
+@keyframes spinCoin {
+  0% {
+    transform: translateX(0) rotate(0deg) rotateY(0deg);
+  }
+  80% {
+    transform: translateX(var(--tilt)) rotate(var(--twist))
+               rotateY(calc(360deg * var(--rotations)));
+  }
+  100% {
+    transform: translateX(0) rotate(0deg)
+               rotateY(calc(360deg * var(--rotations)));
+  }
+}
+
+/* ===============================
+   🔵 круглая кнопка справа
+=============================== */
+.cta-circle {
+  position: absolute;
+  right: -33%;
+  top: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 91px;
+  height: 91px;
+  border-radius: 50%;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+  background: var(--glass-light);
+  backdrop-filter: blur(14px) saturate(118%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--glass-border);
+  cursor: pointer;
+  text-decoration: none;
+  opacity: 0;
+   transform: translateY(-20px) translateZ(0); /* как у лого */
+  transition: transform 1.0s ease; /* плавный flip */
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+	z-index: 300;
+  will-change: transform, background;         /* 🔧 подсказка браузеру */
+  
+  
+}
+
+.cta-circle.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/* ✨ Подсветка при наведении */
+.cta-circle:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  animation: glow-pulse 2.4s ease-in-out infinite;
+}
+
+/* 🔥 Анимация пульсирующего свечения */
+@keyframes glow-pulse {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2),
+                0 8px 24px rgba(0,0,0,0.12);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(255, 255, 255, 0.5),
+                0 10px 28px rgba(0,0,0,0.16);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2),
+                0 8px 24px rgba(0,0,0,0.12);
+  }
+}
+
+
+
+.cta-circle span {
+  font-size: 14px;
+  font-weight: 400;
+  text-align: center;
+  color: #2b8fab;
+  text-shadow: 0 -1px 0 rgba(255,255,255,0.71);
+  
+  -webkit-background-clip: text;
+  background-clip: text;
+  line-height: 1.1;
+  margin-top: 3px;
+  
+}
+
+
+
+/* Контейнер для дополнительных монет */
+.contact-options {
+  position: absolute;
+  right: -33%;
+  top: 16px;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0;
+  z-index: 200;
+}
+
+.contact-options.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Каждая дополнительная монетка */
+.contact-option {
+  width: 91px;
+  height: 91px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+  border: 1px solid rgba(255,255,255,0.6);
+  backdrop-filter: blur(14px) saturate(118%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: scale(0) translateX(0) rotate(0deg);
+  transition: transform 0.8s ease, opacity 0.5s ease;
+  opacity: 0;
+ position: absolute;
+  right: 0;
+  top:0;
+}
+.cta-circle.flipping {
+animation: flipOne 0.6s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+}
+@keyframes flipOne {
+  0%   { transform: rotateY(0deg); }
+  25%  { transform: rotateY(45deg); }
+  50%  { transform: rotateY(90deg); }
+  75%  { transform: rotateY(135deg); }
+  100% { transform: rotateY(180deg); }
+}
+.contact-option.show {
+  opacity: 1;
+  transform: scale(1) translateX(var(--shift, 0px)) rotate(var(--spin, 0deg));
+}
+.contact-option.hide {
+  opacity: 1;
+  transform: scale(0) translateX(0) rotate(0deg);
+}
+
+.cta-circle img {
+  width: 35%;
+  height: auto;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.contact-option img {
+  width: 35%;
+  height: auto;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+
+/* ==============================
+   🏷️ Шапка и фильтры
+============================== */
+
+
 
 header {
-  background: #111;
-  color: #fff;
-  padding: 1rem;
+  background: var(--glass-light);
+  backdrop-filter: blur(14px) saturate(118%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  border: 1px solid var(--glass-border);
+  border-radius: 50px;
+  padding: 1rem 2rem;
+  margin-top: 1rem;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+  
+
+
+  position: sticky;
+  top: 20px;
+  z-index: 100;
+  overflow: hidden;
+    opacity: 0;
+  transform: translateY(-40px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+header.show {
+  opacity: 1;
+  transform: translateY(0);
 }
 
+/* ✨ Подсветка при наведении */
+header:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  animation: glow-pulse 2.4s ease-in-out infinite;
+}
+
+/* 🔥 Анимация пульсирующего свечения */
+@keyframes glow-pulse {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2),
+                0 8px 24px rgba(0,0,0,0.12);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(255, 255, 255, 0.5),
+                0 10px 28px rgba(0,0,0,0.16);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2),
+                0 8px 24px rgba(0,0,0,0.12);
+  }
+}
+
+header h1 {
+  margin: 0;
+  font-weight: 200;
+  font-size: 1.5rem;
+  color: #118badbd;
+  line-height: 18px;
+   background: linear-gradient(to top, rgba(255,255,255,0.93), rgba(49,49,49,0));
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: 0 -1px 0 rgba(255,255,255,0.71);
+}
 .controls {
-  margin-top: 0.5rem;
+  margin-top: 0.7rem;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+select {
+  padding: 0.4rem 0.6rem;
+  border-radius: 19px;
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0);
+  color: #2e9eb7d4;
+    text-shadow: 0 -1px 0 rgba(255,255,255,0.71);
+  backdrop-filter: blur(12px);
+  transition: background 0.3s, border 0.3s;
+ min-width: 130px;
+ 
+  text-align: center;
+   text-align-last: center;   /* Chrome/Edge */
+  -moz-text-align-last: center; /* Firefox */
+}
+select:hover {
+
+  border-color: #fff;
+}
+select option {
+	
+ text-align: left;
+  padding-left: 5rem;
+  color: #062b37;
+  padding: 0.5rem;
+  border-radius: 15px;
+ 
 }
 
+/* при наведении */
+select option:hover {
+  background: rgba(255,255,255,0.45);
+  color: #000;
+}
+select:focus,
+select:focus-visible {
+   outline: none;
+  border-color: rgba(255,255,255,0.7);
+  box-shadow: 0 0 8px rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.3);
+}
+
+
+/* ==============================
+   📐 Сетка проектов
+============================== */
 main {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1rem;
-  padding: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1200px;
+  width: 100%;
 }
 
+/* ==============================
+   🃏 Карточки проектов
+============================== */
 .project {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  background: var(--glass-light);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 82px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  position: relative;
+
+  /* ✅ общий transition */
+  transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+}
+.project:hover {
+  transform: translateY(-10px);
+  background: rgba(255,255,255,0.45);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.12);
 }
 
-.project img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
+/* Анимация появления карточек */
+.project.animate {
+  opacity: 0;
+  transform: scale(0.05);
+  transition: opacity 1.5s ease-out, transform 1.5s ease-out;
+}
+.project.animate.show {
+  opacity: 1;
+  transform: scale(1);
+}
+.project.animate.hide {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.5s ease-in, transform 0.5s ease-in;
 }
 
+/* Hover-анимация с лёгким плаванием */
+.project.animate.show:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 14px 32px rgba(0,0,0,0.18);
+  transition: transform 0.6s ease, box-shadow 0.6s ease;
+  animation: float 3s ease-in-out infinite;
+  animation-delay: 0.6s;
+}
+
+
+/* ==============================
+   ✨ Эффекты карточек (блики)
+============================== */
+.project::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 21%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.84), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+.project::after {
+  content: "";
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 40%;
+  background: linear-gradient(to left, rgba(255,255,255,0.25), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+.project .gradient {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+}
+.project .gradient-bottom {
+  left: 0; right: 0; bottom: 0;
+  height: 50%;
+  background: linear-gradient(to top, rgba(4,100,124,0.55), transparent);
+  z-index: 0;
+}
+.project .gradient-left {
+  top: 0; bottom: 0; left: 0;
+  width: 50%;
+  background: linear-gradient(to right, rgba(36,184,208,0.42), transparent);
+  z-index: 0;
+}
+
+/* ==============================
+   ✨ Z-index fix
+============================== */
+.project .content,
+.project-image {
+  position: relative;
+  z-index: 3;
+}
+.project.expanded {
+  z-index: 10;
+}
+#projectsContainer.expanded {
+  position: relative;
+  z-index: 5;
+}
+
+/* ==============================
+   🖼️ Блок с картинкой
+============================== */
+.project-image {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255,255,255,0.15);
+  height: 200px;
+  padding: 30px 15px 0;
+  box-sizing: border-box;
+}
+.project-image img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: 10px;
+}
+
+/* ==============================
+   📄 Контент карточки
+============================== */
 .project .content {
-  padding: 1rem;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  text-align: center;
+  background: rgba(255,255,255,0.15);
+  justify-content: flex-start;
+  flex-grow: 1;
 }
-
+.content-bottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+}
 .project h3 {
-  margin: 0 0 0.5rem 0;
+  margin: 0 2px;
+  font-size: 23px;
+  font-weight: 400;
+  color: #062b37c4;
+  line-height: 25px;
+  padding-bottom: 10px;
 }
-
-.meta {
+.description, .type-description {
   font-size: 0.9rem;
-  opacity: 0.8;
-  margin-bottom: 0.5rem;
+  color: #062b37c4;
+}
+.description { line-height: 20px; }
+.type-description { line-height: 8px; }
+
+/* ==============================
+   ⭐ Метки (сложность, решения, год)
+============================== */
+.resolved-issue {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #072826;
+  background: linear-gradient(to top, rgba(255,255,255,0.93), rgba(49,49,49,0));
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: 0 -1px 0 rgba(255,255,255,0.71);
+  margin-top: 8px;
+  line-height: 10px;
+  padding-bottom: 11px;
+}
+.resolved-issue-digit {
+  font-size: 43px;
+  color: #072826;
+  background: linear-gradient(to top, rgba(255,255,255,0.93), rgba(49,49,49,0));
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: 0 -1px 0 rgba(255,255,255,0.91);
+  margin-top: auto;
+  line-height: 27px;
+}
+.year {
+  font-size: 0.9rem;
+  color: #062b37;
+  line-height: 0;
+  margin-top: auto;
+  padding-top: 16px;
+  margin-left: 6px;
+}
+.difficulty {
+  font-size: 1.5rem;
+  letter-spacing: 4px;
+  color: #062b37;
+  background: linear-gradient(to top, rgba(255,255,255,0.93), rgba(49,49,49,0));
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: 0 -1px 0 rgba(255,255,255,0.91);
+  margin-top: auto;
+  line-height: 13px;
+  padding-top: 2px;
+}
+span.difficulty2 {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: #062b37;
+  background: none;
 }
 
-.difficulty span {
+/* ==============================
+   📷 Скриншоты и слайдер
+============================== */
+.screenshots-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+.show-screenshots, .hide-screenshots {
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-light);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.show-screenshots:hover, .hide-screenshots:hover {
+  background: rgba(255,255,255,0.5);
+}
+.hidden { display: none !important; }
+
+.screenshots-slider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+}
+.screenshots-slider.active { max-height: 450px; }
+.screenshots-slider img {
+  width: auto;
+  max-width: 500px;
+  height: 400px;
+  object-fit: contain;
+  border-radius: 12px;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+  cursor: pointer;
+}
+.screenshots-slider img.fade-out { opacity: 0; }
+.screenshots-slider button {
+  background: var(--glass-light);
+  border: 1px solid var(--glass-border);
+  border-radius: 50%;
+  width: 40px; height: 40px;
   font-size: 1.2rem;
-  color: gold;
+  cursor: pointer;
+  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.screenshots-slider button:hover {
+  background: rgba(255,255,255,0.5);
+}
+
+/* ==============================
+   🔎 Lightbox
+============================== */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.lightbox img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 20px;
+}
+
+/* ==============================
+   📂 Expanded project
+============================== */
+#projectsContainer.expanded { display: grid !important; }
+#projectsContainer.expanded .project:not(.expanded):not(.will-expand) {
+  opacity: 0;
+  filter: blur(var(--fade-blur));
+  pointer-events: none;
+  transition: opacity 0.6s ease, filter 0.6s ease;
+  /* убрали transform: scale и не меняем позицию */
+}
+.project.expanded {
+  grid-column: 1 / -1;
+    order: -1;              /* ⬅️ поднять в начало сетки */
+  position: relative;
+  max-width: 960px;
+  margin: 40px auto;
+  filter: none;
+  opacity: 1 !important;
+  transform: none !important;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+ animation: expandFadeIn 0.6s ease forwards;
+}
+@keyframes expandFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+.project-details {
+  display: none;
+  padding: 2rem;
+  animation: fadeIn 0.3s ease forwards;
+  background: rgba(255,255,255,0.25);
+  border-radius: 0;
+  margin-top: 1px;
+  text-align: center;
+}
+.project.expanded .project-details { display: block; }
+.project-details p { margin: 0.5rem 0; }
+.close-details {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  background: var(--glass-light);
+  cursor: pointer;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
 }

@@ -1,0 +1,82 @@
+const projects = [
+  {
+    id: 1,
+    name: "Консервированная продукция",
+    year: 2018,
+    rank: 1,
+    type: "shop",
+	typename: "Интернет-магазин",
+	resolvedissue: 22,
+    status: "в архиве",
+    difficulty: 3,
+    technologies: ["UMI-CMS"],
+    logo: "media/rs.png",
+	screenshots: [                           // новый массив скриншотов
+      "media/pr1_screen1.jpg",
+      "media/pr1_screen2.jpg",
+      "media/pr1_screen3.jpg"
+    ],
+    description: "Магазин мелкоптовой консервированной продукции",
+    details: "Полная версия проекта включает личный кабинет, интеграцию с платежной системой Stripe, админ-панель для управления товарами и аналитикой. Проект оптимизирован под SEO и мобильные устройства."	
+  },
+  {
+    id: 2,
+    name: "Системы кондиционирования",
+    year: 2023,
+    rank: 2,
+    type: "shop",
+	typename: "Интернет-магазин",
+	resolvedissue: 5,
+    status: "в архиве",
+    difficulty: 4,
+    technologies: ["WordPress", "Elementor"],
+    logo: "media/cooler.png",
+    description: "Корпоративный сайт с многоязычной поддержкой.",
+    details: "Полная версия проекта включает личный кабинет, интеграцию с платежной системой Stripe, админ-панель для управления товарами и аналитикой. Проект оптимизирован под SEO и мобильные устройства."
+  },
+  {
+    id: 3,
+    name: "Товары для праздника",
+    year: 2012,
+    rank: 2,
+    type: "shop",
+	typename: "Интернет-магазин",
+	resolvedissue: 18,
+    status: "в архиве",
+    difficulty: 5,
+    technologies: ["WordPress", "Elementor"],
+    logo: "media/di.png",
+    description: "CMS: полностью собственная разработка",
+    details: "Полная версия проекта включает личный кабинет, интеграцию с платежной системой Stripe, админ-панель для управления товарами и аналитикой. Проект оптимизирован под SEO и мобильные устройства."
+  },
+  {
+    id: 4,
+    name: "Продукты питания",
+    year: 2022,
+    rank: 5,
+    type: "shop",
+	typename: "Интернет-магазин",
+	resolvedissue: 21,
+    status: "в разработке",
+    difficulty: 4,
+    technologies: ["HTML", "CSS", "JavaScript"],
+    logo: "media/zatarka.png",
+    description: "Простой статичный блог с минималистичным дизайном.",
+	details: "Полная версия проекта включает личный кабинет, интеграцию с платежной системой Stripe, админ-панель для управления товарами и аналитикой. Проект оптимизирован под SEO и мобильные устройства."
+  },
+  {
+    id: 5,
+    name: "Оптовая тоговля",
+    year: 2010,
+    rank: 6,
+    type: "marketplace",
+	typename: "Маркет-плейс",
+	resolvedissue: 10,
+    status: "в архиве",
+    difficulty: 4,
+    technologies: ["HTML", "CSS", "JavaScript"],
+    logo: "media/opttovar.png",
+    description: "Зазработка портала для взаимодействия между покупателями и продавцами.",
+	details: "Полная версия проекта включает личный кабинет, интеграцию с платежной системой Stripe, админ-панель для управления товарами и аналитикой. Проект оптимизирован под SEO и мобильные устройства."
+  }
+];
