@@ -111,6 +111,37 @@ justify-content: center;
    overflow: hidden; /* чтобы блик не вылезал за круг */
 }
 
+/* Блики сверху и справа */
+.logo-circle::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.82), transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.logo-circle::after {
+  content: "";
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 2%;
+  background: linear-gradient(to left, rgba(255,255,255,0.94), transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+
+
+.logo-circle:hover {
+  cursor:pointer;
+ transform: translateY(-3px);
+  
+  box-shadow: 0 3px 6px rgba(0,0,0,0.12);
+}
+
+
 .logo-circle.show {
   opacity: 1;
   transform: translateY(0) translateZ(0);
@@ -181,9 +212,32 @@ justify-content: center;
   backface-visibility: hidden;
 	z-index: 300;
   will-change: transform, background;         /* 🔧 подсказка браузеру */
-  
+  overflow: hidden;
   
 }
+
+/* Блики сверху и справа */
+.cta-circle::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.82), transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.cta-circle::after {
+  content: "";
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 2%;
+  background: linear-gradient(to left, rgba(255,255,255,0.94), transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+
 
 .cta-circle.show {
   opacity: 1;
@@ -193,39 +247,28 @@ justify-content: center;
 
 /* ✨ Подсветка при наведении */
 .cta-circle:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  animation: glow-pulse 2.4s ease-in-out infinite;
+  cursor:pointer;
+ transform: translateY(-3px);
+  
+  box-shadow: 0 3px 6px rgba(0,0,0,0.12);
 }
 
-/* 🔥 Анимация пульсирующего свечения */
-@keyframes glow-pulse {
-  0% {
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2),
-                0 8px 24px rgba(0,0,0,0.12);
-  }
-  50% {
-    box-shadow: 0 0 18px rgba(255, 255, 255, 0.5),
-                0 10px 28px rgba(0,0,0,0.16);
-  }
-  100% {
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2),
-                0 8px 24px rgba(0,0,0,0.12);
-  }
-}
+
 
 
 
 .cta-circle span {
-  font-size: 14px;
+  font-size: 1rem;
   font-weight: 400;
   text-align: center;
-  color: #2b8fab;
-  text-shadow: 0 -1px 0 rgba(255,255,255,0.71);
+  color: #0f667fdb;
+  
   
   -webkit-background-clip: text;
   background-clip: text;
-  line-height: 1.1;
-  margin-top: 3px;
+  line-height: 1.09;
+  margin-top: 2px;
+  letter-spacing: 0.06em;
   
 }
 
@@ -332,39 +375,64 @@ header.show {
   opacity: 1;
   transform: translateY(0);
 }
+/* ✨ Блики как у карточек */
+header::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.42), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+header::after {
+  content: "";
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 1%;
+  background: linear-gradient(to left, rgba(255,255,255), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 🔽 Дополнительные градиенты */
+header .gradient-bottom {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 50%;
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.31), transparent);
+  z-index: 0;
+}
+header .gradient-left {
+  position: absolute;
+  top: 0; bottom: 0; left: 0;
+  width: 50%;
+  background: linear-gradient(to right, rgba(205, 248, 255, 0.24), transparent);
+  z-index: 0;
+}
+
 
 /* ✨ Подсветка при наведении */
 header:hover {
-  border-color: rgba(255, 255, 255, 0.5);
-  animation: glow-pulse 2.4s ease-in-out infinite;
+ 
+   transform: translateY(-3px);
+  
+  box-shadow: 0 3px 6px rgba(0,0,0,0.12);
 }
 
-/* 🔥 Анимация пульсирующего свечения */
-@keyframes glow-pulse {
-  0% {
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2),
-                0 8px 24px rgba(0,0,0,0.12);
-  }
-  50% {
-    box-shadow: 0 0 18px rgba(255, 255, 255, 0.5),
-                0 10px 28px rgba(0,0,0,0.16);
-  }
-  100% {
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2),
-                0 8px 24px rgba(0,0,0,0.12);
-  }
-}
+
 
 header h1 {
   margin: 0;
-  font-weight: 200;
-  font-size: 1.5rem;
-  color: #118badbd;
+  font-weight: 100;
+  font-size: 1.3rem;
+  color: #21788f;
   line-height: 18px;
    background: linear-gradient(to top, rgba(255,255,255,0.93), rgba(49,49,49,0));
   -webkit-background-clip: text;
   background-clip: text;
-  text-shadow: 0 -1px 0 rgba(255,255,255,0.71);
+  letter-spacing: 0.04rem;
 }
 .controls {
   margin-top: 0.7rem;
@@ -378,7 +446,7 @@ select {
   border-radius: 19px;
   border: 1px solid var(--glass-border);
   background: rgba(255, 255, 255, 0);
-  color: #2e9eb7d4;
+  color: #2e9eb7;
     text-shadow: 0 -1px 0 rgba(255,255,255,0.71);
   backdrop-filter: blur(12px);
   transition: background 0.3s, border 0.3s;
@@ -450,6 +518,7 @@ main {
   transform: translateY(-10px);
   background: rgba(255,255,255,0.45);
   box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+  cursor:pointer;
 }
 
 /* Анимация появления карточек */
@@ -472,11 +541,18 @@ main {
 .project.animate.show:hover {
   transform: translateY(-10px);
   box-shadow: 0 14px 32px rgba(0,0,0,0.18);
-  transition: transform 0.6s ease, box-shadow 0.6s ease;
+  transition: transform 1.0s ease, box-shadow 0.6s ease;
   animation: float 3s ease-in-out infinite;
   animation-delay: 0.6s;
 }
-
+/* когда проект развёрнут — отключаем hover */
+.project.expanded:hover {
+  
+  background: var(--glass-light) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08) !important;
+  cursor: default !important;
+  
+}
 
 /* ==============================
    ✨ Эффекты карточек (блики)
@@ -485,8 +561,8 @@ main {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0;
-  height: 21%;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.84), transparent);
+  height: 1%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.64), transparent);
   pointer-events: none;
   z-index: 1;
 }
@@ -494,8 +570,8 @@ main {
   content: "";
   position: absolute;
   top: 0; right: 0; bottom: 0;
-  width: 40%;
-  background: linear-gradient(to left, rgba(255,255,255,0.25), transparent);
+  width: 3%;
+  background: linear-gradient(to left, rgba(255,255,255,0.27), transparent);
   pointer-events: none;
   z-index: 1;
 }
@@ -507,13 +583,13 @@ main {
 .project .gradient-bottom {
   left: 0; right: 0; bottom: 0;
   height: 50%;
-  background: linear-gradient(to top, rgba(4,100,124,0.55), transparent);
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.31), #0000);
   z-index: 0;
 }
 .project .gradient-left {
   top: 0; bottom: 0; left: 0;
   width: 50%;
-  background: linear-gradient(to right, rgba(36,184,208,0.42), transparent);
+  background: linear-gradient(to right, rgba(205, 248, 255, 0.24), #0000);
   z-index: 0;
 }
 
@@ -543,7 +619,7 @@ main {
   justify-content: center;
   align-items: center;
   background: rgba(255,255,255,0.15);
-  height: 200px;
+  height: 185px;
   padding: 30px 15px 0;
   box-sizing: border-box;
 }
@@ -580,10 +656,26 @@ main {
   color: #062b37c4;
   line-height: 25px;
   padding-bottom: 10px;
+  letter-spacing: 0.03em
 }
+.project h4 {
+  
+  font-size: 22px;
+  font-weight: 400;
+  color: #0d3846;
+  line-height: 0px;
+  padding-bottom: 0px;
+  letter-spacing: 0.02em;
+  padding-top: 10px;
+  margin-bottom: 24px;
+}
+
+
+
 .description, .type-description {
-  font-size: 0.9rem;
+  font-size: 0.9em;
   color: #062b37c4;
+  letter-spacing: 0.02em;
 }
 .description { line-height: 20px; }
 .type-description { line-height: 8px; }
@@ -592,49 +684,49 @@ main {
    ⭐ Метки (сложность, решения, год)
 ============================== */
 .resolved-issue {
-  font-size: 12px;
-  letter-spacing: 2px;
-  color: #072826;
-  background: linear-gradient(to top, rgba(255,255,255,0.93), rgba(49,49,49,0));
+  font-size: 16px;
+  letter-spacing: 0.05em;
+  color: #114657;
+  
   -webkit-background-clip: text;
   background-clip: text;
-  text-shadow: 0 -1px 0 rgba(255,255,255,0.71);
+  
   margin-top: 8px;
-  line-height: 10px;
-  padding-bottom: 11px;
+  line-height: 16px;
+  padding-bottom: 13px;
 }
 .resolved-issue-digit {
-  font-size: 43px;
-  color: #072826;
-  background: linear-gradient(to top, rgba(255,255,255,0.93), rgba(49,49,49,0));
+  font-size: 60px;
+  color: #0d4b5f;
   -webkit-background-clip: text;
   background-clip: text;
-  text-shadow: 0 -1px 0 rgba(255,255,255,0.91);
-  margin-top: auto;
+  
   line-height: 27px;
+  letter-spacing: -0.04em;
 }
 .year {
-  font-size: 0.9rem;
+  font-size: 0.9em;
   color: #062b37;
   line-height: 0;
-  margin-top: auto;
+  
   padding-top: 16px;
   margin-left: 6px;
 }
 .difficulty {
   font-size: 1.5rem;
-  letter-spacing: 4px;
-  color: #062b37;
-  background: linear-gradient(to top, rgba(255,255,255,0.93), rgba(49,49,49,0));
+  letter-spacing: 3px;
+  color: #0f4659;
+  text-shadow: 0 -1px 0 rgba(255, 255, 255, 0.49);
   -webkit-background-clip: text;
   background-clip: text;
-  text-shadow: 0 -1px 0 rgba(255,255,255,0.91);
-  margin-top: auto;
+  
+ 
   line-height: 13px;
-  padding-top: 2px;
+  padding-top: 3px;
+  padding-bottom:1px;
 }
 span.difficulty2 {
-  font-size: 12px;
+  font-size: 0.6em;
   font-weight: 400;
   letter-spacing: 1px;
   color: #062b37;
@@ -679,28 +771,31 @@ span.difficulty2 {
   width: auto;
   max-width: 500px;
   height: 400px;
-  object-fit: contain;
+  object-fit: fill;
   border-radius: 12px;
   opacity: 1;
   transition: opacity 0.4s ease;
   cursor: pointer;
+  border: 1px solid #fdfdfdcf;
+  padding: 15px;
 }
 .screenshots-slider img.fade-out { opacity: 0; }
 .screenshots-slider button {
-  background: var(--glass-light);
+  background: rgba(255, 255, 255, 0.14);
   border: 1px solid var(--glass-border);
   border-radius: 50%;
-  width: 40px; height: 40px;
-  font-size: 1.2rem;
+  width: 50px; height: 50px;
+  font-size: 1.3rem;
   cursor: pointer;
   transition: background 0.3s;
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
+  color: #fff;
 }
 .screenshots-slider button:hover {
-  background: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.3);
 }
 
 /* ==============================
@@ -777,21 +872,171 @@ span.difficulty2 {
 .project.expanded .project-details {
   display: block;
   animation: fadeIn 0.4s ease forwards;
+  Z-index:300;
 }
 
-.project-details p { margin: 0.5rem 0; }
+.project-details p { 
+	margin: 0.5rem 0.7rem; 
+	color: #0d4b5f;
+	letter-spacing: 0.02rem;
+	font-size: 1.05rem;
+	line-height: 1.65;
+	}
 
 .close-details {
-  display: inline-block;
-  margin-bottom: 0.5rem;
-  padding: 0.4rem 0.8rem;
+ display: inline-block;
+  margin-bottom: 0.4rem;
+  padding: 0.6rem 0.8rem;
   border: 1px solid var(--glass-border);
-  border-radius: 8px;
-  background: var(--glass-light);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.16);
   cursor: pointer;
+  color: #147084;
+  font-size: 0.90rem;
+  letter-spacing: 0.04rem;
 }
+
+.close-details:hover {
+  background: rgba(255,255,255,0.3);
+}
+
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: none; }
+}
+
+/* Детали задачи и решения */
+.solutions-block {
+  margin-top: 1.5rem;
+  text-align: center;
+  padding-bottom: 3px;
+}
+
+.solutions-block h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
+  color: #044858;
+}
+
+.solution-item {
+  border: 1px solid var(--glass-border);
+  border-radius: 30px;
+  margin: 0.8rem 1.7rem 0.8rem 1.7rem;
+  background: rgba(255,255,255,0);
+  overflow: hidden;
+}
+
+.solution-title {
+ padding: 0.5rem 1rem;
+ letter-spacing: 0.02rem;
+	font-size: 1.05rem;
+  cursor: pointer;
+  background: rgba(255,255,255,0.09);
+  color: #0d4b5f;
+  display: flex;
+  justify-content: center;    /* текст по центру */
+  align-items: center;
+  position: relative;         /* для фиксации стрелки */
+}
+
+.solution-title:hover {
+  background: rgba(255,255,255,0.2);
+}
+/* стрелка */
+.toggle-icon {
+  position: absolute;
+  right: 1rem;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-left: 1px solid #fff;   /* белая стрелка */
+  border-bottom: 1px solid #fff;
+  transform: rotate(-45deg);     /* изначально «вниз» */
+  transition: transform 0.3s ease;
+}
+/* при раскрытии */
+.solution-item.active .toggle-icon {
+  transform: rotate(135deg);     /* поворот «вверх» */
+}
+.solution-desc {
+  color: #0d4b5f;
+  letter-spacing: 0.02rem;
+  font-size: 1.04rem;
+  line-height: 1.65;
+  max-height: 0;
+  overflow: hidden;             /* полностью скрыт в свернутом виде */
+  padding: 0 1rem;
+  transition: max-height 1.4s ease, padding 0.3s ease;
+}
+
+/* раскрытие */
+.solution-desc.show {
+  display: block;
+  max-height: 500px;            /* ограничиваем высоту */
+  padding: 0.8rem 1rem;
+  overflow-y: auto;             /* включаем скролл ТОЛЬКО в открытом */
+  scrollbar-gutter: stable;     /* (CSS3) чтобы не мигал скроллбар */
+}
+
+/* для Firefox можно скрыть сам скроллбар, если хочется */
+.solution-desc.show {
+  scrollbar-width: thin;
+  scrollbar-color: #ffffff1a transparent;
+  
+}
+
+/* для Chrome/Safari */
+.solution-desc.show::-webkit-scrollbar {
+  width: 3px;
+   background: #ffffff33;
+  scrollbar-color: #ffffff1a transparent;
+}
+.solution-desc.show::-webkit-scrollbar-thumb:hover {
+  background: #ffffff33;  /* чуть видимее при наведении */
+   scrollbar-color: #ffffff1a transparent;
+}
+.solution-desc.show::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.3);
+  border-radius: 3px;
+}
+
+.solution-desc.show::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.solution-item.active .solution-desc {
+  max-height: 500px;         /* ставим значение больше, чем реальная высота текста */
+  padding: 0.8rem 1rem;      /* нормальные отступы при раскрытии */
+}
+
+
+/* информация */
+.info-block {
+  margin-top: 1.5rem;
+  text-align: center;
+  padding-bottom: 20px;
+}
+
+.info-block h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
+  color: #044858;
+  text-align: center;
+}
+
+.info-block ul {
+  list-style-type: circle;
+  list-style-position: inside; /* маркер переносится внутрь */
+  text-align: center;
+  padding-left: 0; /* убираем отступ слева */
+  margin: 0 auto;
+}
+
+.info-block li {
+	letter-spacing: 0.02rem;
+  font-size: 1.05rem;
+  margin-bottom: 0.5rem;
+  
+  color: #0d4b5f;
+ 
 }

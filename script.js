@@ -75,11 +75,11 @@ function renderProjects(list) {
         <img src="${Array.isArray(p.logo) ? p.logo[0] : p.logo}" alt="${p.name}">
       </div>
       <div class="content">
+	   <div class="resolved-issue-digit">${p.resolvedissue}</div>
+          <div class="resolved-issue">${getSolutionWords(p.resolvedissue)}</div>           
         <div class="type-description">${p.typename ?? ""}</div>
         <h3>${p.name}</h3>
         <div class="content-bottom">
-          <div class="resolved-issue-digit">${p.resolvedissue}</div>
-          <div class="resolved-issue">${getSolutionWords(p.resolvedissue)}</div>           
           <div class="difficulty">${stars}<br>
           <span class="difficulty2">класс сложности</span></div>
           <div class="year">${p.year ?? "-"} г.</div>
@@ -306,7 +306,7 @@ function hideContactOptions() {
     contactCircle.style.transform = `rotateY(${FIRST_SPIN_DEG}deg)`;
 
     setTimeout(() => {
-      contactCircle.innerHTML = `<span class="order_button">Контакты<br>для заказа</span>`;
+      contactCircle.innerHTML = `<span class="order_button">Контакты</span>`;
       contactCircle.removeAttribute("href");
       contactCircle.dataset.state = "text";
       contactCircle.style.transform = "rotateY(0deg)";
@@ -324,15 +324,15 @@ function getSolutionWords(n) {
   const last = n % 10;
 
   if (lastTwo >= 11 && lastTwo <= 14) {
-    return "интересных<br>решений";
+    return "уникальных<br>решений";
   }
   if (last === 1) {
-    return "интересное<br>решение";
+    return "уникальное<br>решение";
   }
   if (last >= 2 && last <= 4) {
-    return "интересных<br>решения";
+    return "уникальных<br>решения";
   }
-  return "интересных<br>решений";
+  return "уникальных<br>решений";
 }
 
 // === Открыть модалку (FLIP с деталями и скриншотами) ===
@@ -373,14 +373,65 @@ function openModal(project, card) {
   ` : "";
 
   details.innerHTML = `
-    <button class="close-details" type="button">Вернуться к списку проектов</button>
-    <h2>Детали проекта</h2>
-    ${project.status ? `<p><strong>Статус:</strong> ${project.status}</p>` : ""}
-    ${project.description ? `<p><strong>Описание:</strong> ${project.description}</p>` : ""}
-    ${project.details ? `<p class="details"><strong>Подробности:</strong> ${project.details}</p>` : ""}
-    ${(project.technologies && project.technologies.length) ? `<p><strong>Технологии:</strong> ${project.technologies.join(", ")}</p>` : ""}
-    ${shotsHTML}
-  `;
+  <button class="close-details" type="button">Вернуться к списку проектов</button>
+  ${project.description ? `<h4>О проекте</h4>${project.description}` : ""}
+  ${project.status ? `<p><strong>Статус:</strong> ${project.status}</p>` : ""}
+  ${project.details ? `<p class="details"><strong>Подробности:</strong> ${project.details}</p>` : ""}  
+`;
+
+// ✅ вставляем блок «Авторские решения»
+if (project.solutions && project.solutions.length) {
+  const solutionsBlock = document.createElement("div");
+  solutionsBlock.className = "solutions-block";
+  solutionsBlock.innerHTML = `<h4>Уникальные решения</h4>`;
+
+  project.solutions.forEach((sol) => {
+    const item = document.createElement("div");
+    item.className = "solution-item";
+    item.innerHTML = `
+      <div class="solution-title">
+        <span class="title-text">${sol.title}</span>
+        <span class="toggle-icon"></span>
+      </div>
+      <div class="solution-desc">${sol.description}</div>
+    `;
+    solutionsBlock.appendChild(item);
+  });
+
+  details.appendChild(solutionsBlock);
+
+  // аккордеон
+ solutionsBlock.querySelectorAll(".solution-title").forEach(title => {
+  title.addEventListener("click", () => {
+    const item = title.parentElement;
+    const desc = title.nextElementSibling;
+
+    item.classList.toggle("active");
+    desc.classList.toggle("show");
+  });
+});
+}
+
+// === новый блок information ===
+if (project.information && project.information.length) {
+  const infoBlock = document.createElement("div");
+  infoBlock.className = "info-block";
+  infoBlock.innerHTML = `<h4>Краткая информация</h4>`;
+
+  const ul = document.createElement("ul");
+  project.information.forEach(item => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    ul.appendChild(li);
+  });
+
+  infoBlock.appendChild(ul);
+  details.appendChild(infoBlock);
+}
+// ✅ после блока решений добавляем скриншоты
+if (shotsHTML) {
+  details.insertAdjacentHTML("beforeend", shotsHTML);
+}
 
   // включаем expanded
   card.classList.add("expanded", "expanding");
