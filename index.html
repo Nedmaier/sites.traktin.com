@@ -1,55 +1,61 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>Portfolio – Traktin</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div class="topbar">
-  <a class="logo-circle">
-  <img src="img/traktin_logo.png" alt="Traktin logo">
-</a>
-  <header>
-    
-  
-    <h1>Интернет-проекты</h1>
-    <div class="controls">
-      <label>
-        <select id="sortSelect">
-          
-          <option value="year">По дате</option>
-          <option value="name">По названию</option>
-        </select>
-      </label>
 
-      <label>
-        <select id="filterSelect">
-          <option value="all">Все проекты</option>
-          <option value="shop">Интернет-магазины</option>
-          <option value="company">Сайты компаний</option>
-          <option value="marketplace">Маркет-плейсы</option>
-		  <option value="booking">Системы бронирования</option>
-        </select>
-      </label>
+  <!-- 🔝 Верхняя панель -->
+  <div class="topbar">
+
+    <!-- 🟢 1-я строка: логотип и кнопка контактов -->
+    <div class="topbar-row">
+      <a href="#" class="logo-circle">
+        <img src="img/traktin_logo.png" alt="Traktin logo" />
+      </a>
+
+      <a href="#" class="cta-circle" id="contactCircle">
+        <span class="order_button">Контакты</span>
+      </a>
+
+      <!-- 💬 Выпадающие контактные опции -->
+      <div id="contactOptions" class="contact-options"></div>
     </div>
-  </header>
- <a href="#" class="cta-circle" id="contactCircle">
- 
-    <span class="order_button">Контакты</span>
-    
-  </a>
 
-<div id="contactOptions" class="contact-options"></div>
-</div>
+    <!-- 🎛️ 2-я строка: фильтры -->
+    <header>
+      <h1>Интернет-проекты</h1>
+      <div class="controls">
+        <label>
+          <select id="sortSelect">
+            <option value="year">По дате</option>
+            <option value="name">По названию</option>
+          </select>
+        </label>
+
+        <label>
+          <select id="filterSelect">
+            <option value="all">Все проекты</option>
+            <option value="shop">Интернет-магазины</option>
+            <option value="company">Сайты компаний</option>
+            <option value="marketplace">Маркет-плейсы</option>
+            <option value="booking">Системы бронирования</option>
+          </select>
+        </label>
+      </div>
+    </header>
+  </div>
+
+  <!-- 📄 3-я строка: проекты -->
   <main id="projectsContainer"></main>
 
-  <!-- Модальное окно -->
+  <!-- 🪟 Модальное окно -->
   <div class="modal" id="projectModal">
     <div class="modal-content">
-      
       <div class="slider" id="slider"></div>
-      
     </div>
   </div>
 

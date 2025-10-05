@@ -1040,3 +1040,137 @@ span.difficulty2 {
   color: #0d4b5f;
  
 }
+
+/* ===============================
+   📱 ФИНАЛЬНАЯ МОБИЛЬНАЯ ВЕРСТКА
+   Лого + Контакты — на одной линии, фильтры ниже
+=============================== */
+@media (max-width: 768px) {
+  body {
+    padding: 0 10px !important;
+  }
+
+  /* === Общая верхняя зона === */
+  .topbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    position: relative;
+    width: 100%;
+	padding-bottom: 7px;
+  }
+
+  /* === 1 строка: логотип + контакты === */
+  .topbar-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: nowrap;
+    width: 95%;
+	padding-top:5px;
+	    margin-left: 4px;             /* смещение в зависимости от gap */
+    transform: translateX(4px);   /* можно 3–6px подогнать по визуалу */
+  }
+
+  .logo-circle,
+  .cta-circle {
+    position: static !important;
+    width: 70px !important;
+    height: 70px !important;
+    margin: 0 !important;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+  }
+ .cta-circle span {
+	font-size: 0.8rem !important; 
+ }
+	 
+  /* Контактные иконки внутри .cta-circle */
+  .contact-options {
+    position: static !important;
+    transform: none !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 0.6rem !important;
+    margin-top: 0.5rem !important;
+  }
+
+  .contact-option {
+    transform: none !important;
+    opacity: 1 !important;
+    position: static !important;
+    scale: 1 !important;
+  }
+
+  /* === 2 строка: фильтры === */
+  header {
+    margin-top: 0.5rem !important;
+    border-radius: 30px !important;
+    padding: 0.8rem 1rem !important;
+    text-align: center !important;
+    width: 79% !important;
+    max-width: 600px !important;
+    box-sizing: border-box;
+  }
+
+  .controls {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.6rem !important;
+  }
+
+  select {
+    width: 100% !important;
+    min-width: 100% !important;
+    font-size: 0.9rem !important;
+    text-align: center !important;
+  }
+
+  /* === 3 строка: проекты === */
+  main {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    justify-items: center !important;
+    gap: 1.2rem !important;
+    padding: 1rem !important;
+    width: 94% !important;
+    max-width: 100% !important;
+  }
+
+  .project {
+    width: 100% !important;
+    border-radius: 50px !important;
+  }
+
+  .project-image {
+    height: 150px !important;
+  }
+}
+
+/* === Маленькие экраны (iPhone SE и т.п.) === */
+@media (max-width: 480px) {
+  .logo-circle,
+  .cta-circle {
+    width: 72px !important;
+    height: 72px !important;
+  }
+.cta-circle span {
+	font-size: 0.8rem !important; 
+ }
+  header {
+    border-radius: 25px !important;
+    padding: 0.6rem 0.8rem !important;
+  }
+
+  header h1 {
+    font-size: 1rem !important;
+  }
+
+  .project-image {
+    height: 130px !important;
+  }
+}
