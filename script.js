@@ -591,8 +591,73 @@ function closeLightbox() {
 sortSelect.addEventListener("change", applyFilters);
 filterSelect.addEventListener("change", applyFilters);
 
+
+
+// ======================================================
+// 🔹 Работа с URL (открытие по ссылке / назад)
+// ======================================================
+function openProjectByLink(link) {
+  if (!link) return;
+  const project = projects.find(p => p.link === link);
+  if (!project) return;
+
+  const card = [...document.querySelectorAll(".project")].find(
+    el => el.querySelector("h3")?.innerText === project.name
+  );
+
+  if (card) {
+    openModal(project, card);
+  } else {
+    // если карточка ещё не отрендерена (например, фильтр другой)
+    applyFilters();
+    setTimeout(() => {
+      const retry = [...document.querySelectorAll(".project")].find(
+        el => el.querySelector("h3")?.innerText === project.name
+      );
+      if (retry) openModal(project, retry);
+    }, 600);
+  }
+}
+
+window.addEventListener("popstate", () => {
+  const link = window.location.pathname.replace("/", "");
+  if (!link) {
+    // если вернулись на главную — закрываем текущий проект
+    const opened = document.querySelector(".project.expanded");
+    if (opened) closeModal(opened);
+  } else {
+    openProjectByLink(link);
+  }
+});
+
+// ======================================================
+// 🔹 Изменение URL при открытии / закрытии проекта
+// ======================================================
+const originalOpenModal = openModal;
+openModal = function (project, card) {
+  originalOpenModal(project, card);
+
+  // ✅ Меняем URL только если есть link
+  if (project.link && typeof project.link === "string" && project.link.trim() !== "") {
+    window.history.pushState({ project: project.link }, "", `/${project.link}`);
+  }
+};
+
+const originalCloseModal = closeModal;
+closeModal = function (card) {
+  originalCloseModal(card);
+
+  // ✅ Возврат URL только если был изменён
+  if (window.location.pathname !== "/") {
+    window.history.pushState({}, "", "/");
+  }
+};
+
 // === Инициализация ===
 document.addEventListener("DOMContentLoaded", () => {
   sortSelect.value = "year";   // по умолчанию сортируем по дате
   applyFilters();
+   // 🔹 NEW: проверяем, есть ли ссылка в адресной строке
+  const link = window.location.pathname.replace("/", "");
+  if (link) openProjectByLink(link); // если есть — открываем нужный проект
 });
