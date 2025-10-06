@@ -1064,47 +1064,93 @@ span.difficulty2 {
   /* === 1 строка: логотип + контакты === */
   .topbar-row {
     display: flex;
-    justify-content: center;
+     justify-content: center !important;
     align-items: center;
-    gap: 1rem;
+    gap: 0.5rem;
     flex-wrap: nowrap;
     width: 95%;
 	padding-top:5px;
 	    margin-left: 4px;             /* смещение в зависимости от gap */
-    transform: translateX(4px);   /* можно 3–6px подогнать по визуалу */
+transform: translateX(calc(var(--auto-shift, 0px) + 4px)); /* оставляем твой 4px базовый */
+  transition: transform 0.55s cubic-bezier(0.25, 1, 0.3, 1);
+	
   }
 
   .logo-circle,
   .cta-circle {
     position: static !important;
-    width: 70px !important;
-    height: 70px !important;
+    width: 65px !important;
+    height: 65px !important;
     margin: 0 !important;
     display: flex !important;
     justify-content: center;
     align-items: center;
   }
  .cta-circle span {
-	font-size: 0.8rem !important; 
+	font-size: 0.75rem !important; 
  }
 	 
-  /* Контактные иконки внутри .cta-circle */
+ 
   .contact-options {
-    position: static !important;
+    position: absolute !important;
+    display: flex !important;
     transform: none !important;
     flex-direction: row !important;
     justify-content: center !important;
     align-items: center !important;
     gap: 0.6rem !important;
     margin-top: 0.5rem !important;
+	width: auto !important;           /* ⬅ убираем фикс. размеры */
+    height: auto !important;          /* ⬅ убираем фикс. размеры */
+	flex-wrap: nowrap !important; 
+	margin: 0 !important;  
+	  top: 5px;                   /* подогнать по центру “Контакты” */
+  right: calc(39% - 33px);     /* вычисляем позицию по кругу */
+   pointer-events: none;   
+	
+  }
+
+.cta-circle img,
+  .contact-option img {
+    width: 60% !important;
+    height: auto !important;        /* ✅ сохраняем пропорции */
+    object-fit: contain !important;
+    border-radius: 0 !important;
+    display: block !important;
   }
 
   .contact-option {
-    transform: none !important;
-    opacity: 1 !important;
-    position: static !important;
+       width: 65px !important;           /* ⬅ фиксируем круглую форму */
+    height: 65px !important;
+    border-radius: 50% !important;
+    flex-shrink: 0 !important;        /* ⬅ запрещаем сжимание */
+    right: 0 !important;
+    top: 0 !important;
+    transform: scale(0) translateX(0) rotate(0deg);
+    transition: transform 0.8s ease, opacity 0.5s ease;
+    opacity: 0;
+  position: absolute !important;
     scale: 1 !important;
+	    margin: 0 !important; 
   }
+  
+   /* при появлении — плавный выезд */
+  .contact-option.show {
+    opacity: 1;
+    transform: scale(1)
+      translateX(var(--shift-mobile, 65px))      /* ← радиус выкатывания */
+      rotate(var(--spin, 0deg));
+  }
+   /* при скрытии */
+  .contact-option.hide {
+    opacity: 0;
+    transform: scale(0) translateX(0) rotate(0deg);
+  }
+    /* задаём разный сдвиг для каждой монеты (чтобы не слипались) */
+  .contact-option:nth-child(1) { --shift-mobile: 70px; }
+  .contact-option:nth-child(2) { --shift-mobile: 140px; }
+  .contact-option:nth-child(3) { --shift-mobile: 210px; }
+  
 
   /* === 2 строка: фильтры === */
   header {
@@ -1149,17 +1195,127 @@ span.difficulty2 {
   .project-image {
     height: 150px !important;
   }
+   /* Дополнительно: чтобы не вылезали за границы */
+  .contact-options {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 0.4rem !important;
+  }
+  /* === 📱 Оптимизация раскрывающихся блоков решений для мобильной версии === */
+  
+   .solutions-block h3 {
+    font-size: 1rem !important;
+    margin-bottom: 0.6rem !important;
+  }
+
+  .solution-item {
+    margin: 0.6rem 0.8rem !important;
+    border-radius: 20px !important;
+  }
+
+  .solution-title {
+  padding: 0.7rem 1.7rem 0.1rem 0.9rem;
+  letter-spacing: 0.02rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: #0d4b5f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  line-height:1.2rem;
+   background: none;
+}
+  .solution-title:hover {
+  background: none;
+	}
+.project-details p {
+  margin: 0.5rem 0.7rem;
+  color: #0d4b5f;
+  letter-spacing: 0.02rem;
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+  .solution-desc {
+    font-size: 0.88rem !important;
+    line-height: 1.45 !important;
+    padding: 0.4rem 0.8rem !important;
+  }
+
+  .solution-desc.show {
+    max-height: 400px !important;
+    padding: 0.6rem 0.9rem !important;
+  }
+
+  .info-block h3 {
+    font-size: 1rem !important;
+    margin-bottom: 0.6rem !important;
+  }
+
+  .info-block li {
+    font-size: 0.95rem !important;
+    line-height: 1.5 !important;
+  }
+  .project-details {
+  display: none;
+  padding: 1rem;
+  background: rgba(255,255,255,0.25);
+  margin-top: 1px;
+  text-align: center;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+ .screenshots-slider {
+    flex-direction: column !important;
+    gap: 0.6rem !important;
+    margin-top: 0.6rem !important;
+    max-height: none !important;
+	flex-direction: row !important; 
+	position: relative !important; 
+  }
+
+  .screenshots-slider img {
+    max-width: 88% !important;
+    height: auto !important;          /* ✅ сохраняем пропорции */
+    max-height: 260px !important;     /* мягкое ограничение */
+    object-fit: contain !important;
+    border-radius: 10px !important;
+    padding: 8px !important;
+  }
+
+  .screenshots-slider button {
+      position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50% !important;
+    font-size: 1.1rem !important;
+    background: rgba(255, 255, 255, 0.18) !important;
+    color: #fff !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+   .screenshots-slider button:first-of-type {
+    left: 4% !important;
+  }
+
+  .screenshots-slider button:last-of-type {
+    right: 4% !important;
+  }
+  
 }
 
 /* === Маленькие экраны (iPhone SE и т.п.) === */
 @media (max-width: 480px) {
   .logo-circle,
   .cta-circle {
-    width: 72px !important;
-    height: 72px !important;
+    width: 65px !important;
+    height: 65px !important;
   }
 .cta-circle span {
-	font-size: 0.8rem !important; 
+	font-size: 0.76rem !important; 
  }
   header {
     border-radius: 25px !important;
@@ -1173,4 +1329,50 @@ span.difficulty2 {
   .project-image {
     height: 130px !important;
   }
+  .solution-title {
+  padding: 0.7rem 2rem 0.1rem 1.2rem;
+  letter-spacing: 0.02rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  color: #0d4b5f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  line-height:1.37rem;
+}
+.project-details p {
+  margin: 0.5rem 0.7rem;
+  color: #0d4b5f;
+  letter-spacing: 0.02rem;
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.solution-title:hover {
+  background: none;
+}
+ .screenshots-slider img {
+    max-width: 95% !important;
+    max-height: 220px !important;
+    padding: 6px !important;
+  }
+
+  .screenshots-slider button {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 1.0rem !important;
+	top: 50% !important;                     /* центр вертикально */
+    transform: translateY(-50%) !important;  /* компенсируем высоту */
+  }
+.screenshots-slider button:first-of-type {
+    left: 0% !important;
+  }
+
+  .screenshots-slider button:last-of-type {
+    right: 0% !important;
+  }
+    .contact-option:nth-child(1) { --shift-mobile: 70px; }
+  .contact-option:nth-child(2) { --shift-mobile: 140px; }
+  .contact-option:nth-child(3) { --shift-mobile: 210px; }
 }

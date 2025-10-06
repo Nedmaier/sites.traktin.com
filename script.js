@@ -236,6 +236,44 @@ const FIRST_SPIN_DURATION = 600; // длительность анимации п
 const FIRST_SHIFT = 120;         // сдвиг вправо второй монеты
 const SPIN_DEG = 720;            // обороты остальных монет (540 / 720 / 1080 и т.д.)
 
+function adjustTopbarShift() {
+  const row = document.querySelector(".topbar-row");
+  const opts = document.getElementById("contactOptions");
+  if (!row || !opts) return;
+
+  const last = opts.querySelector(".contact-option:last-child");
+  if (!last) {
+    row.style.setProperty("--auto-shift", "0px");
+    return;
+  }
+
+  // чуть раньше реагируем (через 550–600мс)
+  setTimeout(() => {
+    const lastRect = last.getBoundingClientRect();
+    const vw = window.innerWidth || document.documentElement.clientWidth;
+
+    // вычисляем переполнение
+    let overflow = Math.ceil(lastRect.right - vw + 12);
+
+    // добавляем небольшой запас (чтобы не впритык)
+    if (overflow > 0) overflow += 42;  // <--- 👈 добавляем 42px воздуха
+
+    if (overflow > 0) {
+      const shiftValue = Math.min(overflow, vw * 0.3); // <--- 👈 увеличил максимум до 30% ширины
+      row.style.setProperty("--auto-shift", `-${shiftValue}px`);
+    } else {
+      row.style.setProperty("--auto-shift", "0px");
+    }
+  }, 0); // <--- 👈 уменьшаем задержку (реагирует почти сразу после выезда)
+}
+
+function resetTopbarShift() {
+  const row = document.querySelector(".topbar-row");
+  if (row) row.style.setProperty("--auto-shift", "0px");
+}
+
+
+
 // === Клик по кнопке ===
 contactCircle.addEventListener("click", (e) => {
   const isIcon = contactCircle.dataset.state === "icon";
@@ -260,8 +298,13 @@ contactCircle.addEventListener("click", (e) => {
   }, FIRST_SPIN_DURATION / 2);
 
   if (actions.length > 1) {
-    showContactOptions();
-  }
+  showContactOptions();
+
+  // ⚙️ подгоняем после окончания всех анимаций (последняя монета появляется через ~600мс)
+  setTimeout(() => {
+    adjustTopbarShift();
+  }, 900);
+}
 });
 
 // === Выкат остальных монет ===
@@ -291,7 +334,7 @@ function showContactOptions() {
   contactOptions.classList.add("show");
 
   if (closeTimer) clearTimeout(closeTimer);
-  closeTimer = setTimeout(hideContactOptions, 3000);
+  closeTimer = setTimeout(hideContactOptions, 7000);
 }
 
 function hideContactOptions() {
@@ -313,6 +356,7 @@ function hideContactOptions() {
     }, FIRST_SPIN_DURATION / 2);
 
     contactOptions.innerHTML = "";
+	 setTimeout(() => resetTopbarShift(), 600);
   }, 700);
 }
 
