@@ -70,6 +70,7 @@ justify-content: center;
   position: sticky;
   top: 5px;
   z-index: 100;
+  padding-right:20px;
 }
 
 /* ===============================
@@ -261,7 +262,7 @@ justify-content: center;
   font-size: 1rem;
   font-weight: 400;
   text-align: center;
-  color: #0f667fdb;
+  color: #228aa8db;
   
   
   -webkit-background-clip: text;
@@ -297,9 +298,16 @@ justify-content: center;
   width: 91px;
   height: 91px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.35);
-  border: 1px solid rgba(255,255,255,0.6);
+  
+    box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+  background: var(--glass-light);
   backdrop-filter: blur(14px) saturate(118%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+   border: 1px solid var(--glass-border);
+  
+  
+  
+ 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -309,7 +317,32 @@ justify-content: center;
  position: absolute;
   right: 0;
   top:0;
+   overflow: hidden;
 }
+
+/* Блики сверху и справа */
+.contact-option::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.82), transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.contact-option::after {
+  content: "";
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 2%;
+  background: linear-gradient(to left, rgba(255,255,255,0.94), transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+
+
 .cta-circle.flipping {
 animation: flipOne 0.6s cubic-bezier(0.77, 0, 0.175, 1) forwards;
 }
@@ -451,7 +484,7 @@ select {
   backdrop-filter: blur(12px);
   transition: background 0.3s, border 0.3s;
  min-width: 130px;
- 
+ width: 125px;
   text-align: center;
    text-align-last: center;   /* Chrome/Edge */
   -moz-text-align-last: center; /* Firefox */
@@ -561,7 +594,7 @@ main {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0;
-  height: 1%;
+  height: 4px;
   background: linear-gradient(to bottom, rgba(255,255,255,0.64), transparent);
   pointer-events: none;
   z-index: 1;
@@ -570,8 +603,8 @@ main {
   content: "";
   position: absolute;
   top: 0; right: 0; bottom: 0;
-  width: 3%;
-  background: linear-gradient(to left, rgba(255,255,255,0.27), transparent);
+  width: 3px;
+  background: linear-gradient(to left, rgba(255,255,255,0.43), transparent);
   pointer-events: none;
   z-index: 1;
 }
@@ -1059,6 +1092,7 @@ span.difficulty2 {
     position: relative;
     width: 100%;
 	padding-bottom: 7px;
+	 padding-right:0px;
   }
 
   /* === 1 строка: логотип + контакты === */
@@ -1066,11 +1100,11 @@ span.difficulty2 {
     display: flex;
      justify-content: center !important;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
     flex-wrap: nowrap;
     width: 95%;
 	padding-top:5px;
-	    margin-left: 4px;             /* смещение в зависимости от gap */
+	    margin-left: -3px;             /* смещение в зависимости от gap */
 transform: translateX(calc(var(--auto-shift, 0px) + 4px)); /* оставляем твой 4px базовый */
   transition: transform 0.55s cubic-bezier(0.25, 1, 0.3, 1);
 	
