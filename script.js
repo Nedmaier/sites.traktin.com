@@ -385,13 +385,18 @@ function openModal(project, card) {
 
   // уже раскрыта — выходим
   if (card.classList.contains("expanded")) return;
-
+// 📍 Сохраняем индекс карточки
+card.dataset.nextSibling = card.nextElementSibling ? card.nextElementSibling.dataset.name || card.nextElementSibling.querySelector("h3")?.innerText || "" : "";
   // закрываем предыдущую, если была
   const opened = container.querySelector(".project.expanded");
   if (opened && opened !== card) closeModal(opened);
 
   // включаем режим "остальные скрыть"
   container.classList.add("expanded");
+  // 🧹 Скрываем остальные карточки до начала анимации
+container.querySelectorAll(".project").forEach(el => {
+  if (el !== card) el.classList.add("hidden-project");
+});
   card.classList.add("will-expand");
 
   // FIRST: текущее (collapsed)
@@ -417,7 +422,6 @@ function openModal(project, card) {
   ` : "";
 
   details.innerHTML = `
-  <button class="close-details" type="button">Вернуться к списку проектов</button>
   ${project.description ? `<h4>О проекте</h4>${project.description}` : ""}
   ${project.status ? `<p><strong>Статус:</strong> ${project.status}</p>` : ""}
   ${project.details ? `<p class="details"><strong>Подробности:</strong> ${project.details}</p>` : ""}  
@@ -481,12 +485,37 @@ if (shotsHTML) {
   card.classList.add("expanded", "expanding");
   card.setAttribute("aria-expanded", "true");
   card.appendChild(details);
+  // 🔹 Добавляем внешнюю кнопку "вернуться"
+	let backBtn = document.createElement("button");
+	backBtn.className = "close-details-floating";
+	backBtn.textContent = "Вернуться к списку проектов";
+	document.body.appendChild(backBtn);
 
-  // кнопка «назад»
-  details.querySelector(".close-details").addEventListener("click", (e) => {
-    e.stopPropagation();
-    closeModal(card);
-  });
+// позиционируем кнопку над карточкой
+function positionBackButton() {
+  const rect = card.getBoundingClientRect();
+  backBtn.style.position = "absolute";
+backBtn.style.top = `${window.scrollY + rect.top - Math.min(50, rect.height * 0.03)}px`;
+
+const btnWidth = backBtn.offsetWidth || 240; // fallback если кнопка ещё не отрисовалась
+backBtn.style.left = `${window.scrollX + rect.left + rect.width / 2 - btnWidth / 2}px`;
+}
+positionBackButton();
+
+// обновляем при скролле/resize
+window.addEventListener("scroll", positionBackButton);
+window.addEventListener("resize", positionBackButton);
+
+// закрытие
+backBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  closeModal(card);
+  backBtn.remove();
+  window.removeEventListener("scroll", positionBackButton);
+  window.removeEventListener("resize", positionBackButton);
+});
+
+  
 
   // если есть слайдер
   if (hasShots) {
@@ -505,6 +534,11 @@ if (shotsHTML) {
     }
     prev.addEventListener("click", (e) => { e.stopPropagation(); show(idx - 1); });
     next.addEventListener("click", (e) => { e.stopPropagation(); show(idx + 1); });
+	
+	  img.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openLightbox(img.src);
+  });
   }
 
   // LAST: expanded
@@ -527,6 +561,15 @@ if (shotsHTML) {
   });
 
   card.addEventListener("transitionend", function tidy(e) {
+	// 💫 Плавно скрываем остальные карточки, кроме раскрытой
+setTimeout(() => {
+  document.querySelectorAll(".project").forEach(el => {
+    if (el !== card) {
+      el.classList.add("faded-out");
+    }
+  });
+}, 150); // небольшая задержка, чтобы не ломать FLIP  
+	  
     if (e.propertyName !== "transform") return;
     card.style.transition = "";
     card.style.transform  = "";
@@ -537,54 +580,107 @@ if (shotsHTML) {
 
 // === Закрыть модалку (FLIP обратно) ===
 function closeModal(card) {
+  // 🧹 Удаляем плавающую кнопку, если есть
+  const floatingBtn = document.querySelector(".close-details-floating");
+  if (floatingBtn) floatingBtn.remove();
+
   const container = document.getElementById("projectsContainer");
   if (!card) card = container.querySelector(".project.expanded");
   if (!card) return;
 
-  // LAST (expanded)
-  const last = card.getBoundingClientRect();
+  // 💫 предотвращаем "прыжок" из-за исчезающего скролла
+  const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+  if (scrollbarWidth > 0) {
+    document.body.style.paddingRight = `${scrollbarWidth}px`;
+    document.body.style.overflowY = "hidden";
+  }
 
-  // финальный DOM (collapsed)
+  // --- 1️⃣ возвращаем все карточки в поток, иначе они "display:none" и не видны FLIP ---
+  container.querySelectorAll(".project.hidden-project").forEach(el => el.classList.remove("hidden-project"));
+
+  // --- 2️⃣ сохраняем позиции до закрытия ---
+  const cards = Array.from(container.querySelectorAll(".project"));
+  const firstRects = new Map();
+  cards.forEach(el => firstRects.set(el, el.getBoundingClientRect()));
+
+  // --- 3️⃣ переключаемся в обычный режим ---
   card.classList.add("collapsing");
   card.classList.remove("expanded");
   card.setAttribute("aria-expanded", "false");
+  container.classList.remove("expanded");
 
-  // FIRST (collapsed)
-  const first = card.getBoundingClientRect();
+  // --- 4️⃣ форсируем пересчёт макета ---
+  void container.offsetWidth;
 
-  // INVERT
-  const dx = last.left - first.left;
-  const dy = last.top  - first.top;
-  const sx = last.width  / first.width  || 1;
-  const sy = last.height / first.height || 1;
+  // --- 5️⃣ новые позиции ---
+  const lastRects = new Map();
+  cards.forEach(el => lastRects.set(el, el.getBoundingClientRect()));
 
-  card.style.transition = "none";
-  card.style.transform  = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
+  // --- 6️⃣ FLIP-анимация для всех карточек ---
+  cards.forEach(el => {
+    const first = firstRects.get(el);
+    const last  = lastRects.get(el);
+    if (!first || !last) return;
+    const dx = first.left - last.left;
+    const dy = first.top  - last.top;
+    const sx = first.width  / last.width  || 1;
+    const sy = first.height / last.height || 1;
 
-  requestAnimationFrame(() => {
+    el.style.transition = "none";
+    el.style.transform  = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
+    el.style.willChange = "transform";
+
     requestAnimationFrame(() => {
-      card.style.transition = "transform 1200ms cubic-bezier(0.22,1,0.36,1), opacity 300ms ease";
-      card.style.transform  = "translate(0,0) scale(1)";
+      requestAnimationFrame(() => {
+        // 🎬 тут можно регулировать скорость возврата (увеличивай 900ms → 1300ms, 1500ms и т.д.)
+        el.style.transition = "transform 1300ms cubic-bezier(0.22,1,0.36,1), opacity 0.6s ease";
+        el.style.transform  = "translate(0,0) scale(1)";
+        el.style.opacity = "1";
+        el.style.filter = "blur(0)";
+      });
+    });
+
+    el.addEventListener("transitionend", function onEnd(e) {
+      if (e.propertyName !== "transform") return;
+      el.style.transition = "";
+      el.style.transform  = "";
+      el.style.willChange = "";
+      el.removeEventListener("transitionend", onEnd);
     });
   });
 
-  card.addEventListener("transitionend", function tidy(e) {
-    if (e.propertyName !== "transform") return;
+  // --- 7️⃣ убираем детали ---
+  const details = card.querySelector(".project-details");
+  if (details) details.remove();
 
-    card.style.transition = "";
-    card.style.transform  = "";
+  // --- 8️⃣ возвращаем карточку на своё место ---
+  setTimeout(() => {
+    const nextName = card.dataset.nextSibling;
+    if (nextName) {
+      const nextEl = [...container.children].find(el => {
+        const title = el.querySelector("h3")?.innerText;
+        return title === nextName;
+      });
+      if (nextEl) container.insertBefore(card, nextEl);
+      else container.appendChild(card);
+    } else {
+      container.appendChild(card);
+    }
     card.classList.remove("collapsing");
 
-    // удаляем детали
-    const details = card.querySelector(".project-details");
-    if (details) details.remove();
+    // ✅ полностью восстанавливаем кликабельность и внешний вид
+    container.querySelectorAll(".project").forEach(el => {
+      el.style.opacity = "1";
+      el.style.filter = "none";
+      el.style.pointerEvents = "auto";
+    });
 
-    // остальные снова видны
-    container.classList.remove("expanded");
-
-    card.removeEventListener("transitionend", tidy);
-  }, { once: true });
+    // 🧹 возвращаем прокрутку после завершения анимации
+    document.body.style.overflowY = "";
+    document.body.style.paddingRight = "";
+  }, 1300);
 }
+
 
 
 

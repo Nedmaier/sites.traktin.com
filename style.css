@@ -543,6 +543,9 @@ main {
   flex-direction: column;
   box-shadow: 0 6px 18px rgba(0,0,0,0.08);
   position: relative;
+    position: relative;
+  clip-path: inset(0 round 82px); /* тот же радиус, что border-radius */
+  border-radius: 82px;
 
   /* ✅ общий transition */
   transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
@@ -587,6 +590,7 @@ main {
   
 }
 
+
 /* ==============================
    ✨ Эффекты карточек (блики)
 ============================== */
@@ -625,6 +629,13 @@ main {
   background: linear-gradient(to right, rgba(205, 248, 255, 0.24), #0000);
   z-index: 0;
 }
+
+.project .gradient,
+.project::before,
+.project::after {
+  border-radius: inherit;
+}
+
 
 /* ==============================
    ✨ Z-index fix
@@ -858,9 +869,54 @@ span.difficulty2 {
   opacity: 0;
   filter: blur(var(--fade-blur));
   pointer-events: none;
-  transition: none !important; /* сразу скрываем, без моргания */
- 
+   
+  
 }
+
+
+.project.faded-out {
+  opacity: 0;
+  filter: blur(6px);
+  transform: scale(0.96);
+  transition: opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease;
+  pointer-events: none;
+}
+.project.hidden-project {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  display: none !important;
+}
+
+.project.expanded .screenshots-slider {
+  position: relative;
+  z-index: 20; /* выше деталей и градиентов */
+}
+
+.project.expanded .screenshots-slider button,
+.project.expanded .screenshots-slider img {
+  pointer-events: auto !important;
+}
+/* Контейнер для визуальных эффектов внутри карточки */
+.project-inner {
+  position: relative;
+  border-radius: inherit;
+  overflow: hidden; /* только внутри этого контейнера */
+}
+
+/* Перемещаем псевдоэлементы и градиенты внутрь */
+.project-inner::before,
+.project-inner::after,
+.project-inner .gradient {
+  position: absolute;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
 
 /* Финальное состояние раскрытой карточки */
 .project.expanded {
@@ -868,10 +924,11 @@ span.difficulty2 {
   order: -1;            
   position: relative;
   max-width: 960px;
-  margin: 40px auto;
+  margin: 52px auto;
   filter: none;
   opacity: 1 !important;  
   z-index: 10;
+    overflow: visible !important; /* нужно, чтобы клики и стрелки проходили */
 }
 
 /* Фаза анимации открытия */
@@ -891,10 +948,33 @@ span.difficulty2 {
     will-change: transform;
 }
 
+/* кнопка закрытие карточки развернутого проекта */
+.close-details-floating {
+  position: absolute;
+  padding: 0.7rem 1.2rem;
+  border-radius: 22px;
+  border: 1px solid var(--glass-border);
+  background: rgba(138, 226, 246, 0.93);
+  backdrop-filter: blur(10px);
+  color: #1288a6;
+  font-size: 0.95rem;
+  letter-spacing: 0.04rem;
+  cursor: pointer;
+  z-index: 2500;
+  transition: background 0.3s, transform 0.3s;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+.close-details-floating:hover {
+  background: rgba(255, 255, 255, 0.45);
+  transform: translateY(-2px);
+}
+
+
+
 /* Детали внутри карточки */
 .project-details {
   display: none;
-  padding: 2rem;
+  padding: 0.3rem 2rem 2rem 2rem;
   background: rgba(255,255,255,0.25);
   margin-top: 1px;
   text-align: center;
@@ -905,7 +985,9 @@ span.difficulty2 {
 .project.expanded .project-details {
   display: block;
   animation: fadeIn 0.4s ease forwards;
-  Z-index:300;
+   position: relative;
+  z-index: 10;
+  overflow: visible !important;
 }
 
 .project-details p { 
@@ -1298,6 +1380,8 @@ transform: translateX(calc(var(--auto-shift, 0px) + 4px)); /* оставляем
   text-align: center;
   animation: fadeIn 0.3s ease forwards;
 }
+
+
 
  .screenshots-slider {
     flex-direction: column !important;
