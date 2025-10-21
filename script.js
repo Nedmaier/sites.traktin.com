@@ -225,8 +225,8 @@ contactCircle.dataset.state = contactCircle.dataset.state || "text";
 // Массив доступных событий
 const actions = [
   { name: "Telegram", icon: "img/tg1.png", link: "https://t.me/nedmaier" },
-  { name: "Email", icon: "img/mail_white2.png", link: "mailto:test@example.com" },
-  { name: "WhatsApp", icon: "img/whatsupp_white.png", link: "https://wa.me/123456789" }
+  { name: "Email", icon: "img/mail_white2.png", link: "mailto:nedmaier@gmail.com" },
+  { name: "WhatsApp", icon: "img/whatsupp_white.png", link: "https://wa.me/79215926393" }
 ];
 
 let closeTimer = null;
