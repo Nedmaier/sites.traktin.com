@@ -469,7 +469,7 @@ if (project.information && project.information.length) {
   const ul = document.createElement("ul");
   project.information.forEach(item => {
     const li = document.createElement("li");
-    li.textContent = item;
+    li.innerHTML = item;
     ul.appendChild(li);
   });
 
